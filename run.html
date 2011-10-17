@@ -51,9 +51,7 @@
             <section class="cols vis-break brdr cntrtxt">
             	<script>
 					$(document).ready(function () {
-						$('#simdate_day').html(localStorage["az.simdateDay"]);
-						$('#simdate_month').html(localStorage["az.simdateMonth"]);
-						$('#simdate_year').html(localStorage["az.simdateYear"]);
+						updateDates(parseInt(localStorage["az.simday"], 10));
 					});
             	</script>
 				<div class="simdate">DAY: <span id="simdate_day"></span> MONTH: <span id="simdate_month"></span> YEAR: <span id="simdate_year"></span></div>

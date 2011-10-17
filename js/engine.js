@@ -21,118 +21,77 @@
  * 
  */
 
+// Date related functions.
+// TODO: Put in separate module
+function day2date(day) {
+	var tmp = day;
+	var day_of_month = tmp % 30; tmp = Math.floor(tmp / 30);
+	var month_of_year = tmp % 12; tmp = Math.floor(tmp / 12);
+	var year = tmp;
+	// Count from 1 in the frontend.
+	return {
+		'day': day_of_month + 1,
+		'month': month_of_year + 1,
+		'year': year + 1
+	};
+}
+
+function isWeekEnd(day) {
+	return day % 7 === 0;
+}
+
+function isMonthEnd(day) {
+	return day % 30 === 0;
+}
+
+function isYearEnd(day) {
+	return day % 360 === 0;
+}
+
+function updateDates(day)
+{
+	var date = day2date(day);
+	$('#simdate_day').html(date.day);
+	$('#simdate_month').html(date.month);
+	$('#simdate_year').html(date.year);
+}
+
+// Simulation entry point.
+function simulate(days) {
+	var currentDay = parseInt(localStorage["az.simday"], 10);
+
+	for (var i = 0; i < days; i++)
+	{
+		// TODO: Check the order of ++ and calculateDay.
+		currentDay++;
+		calculateDay();
+		updateHistory(currentDay);
+	}
+	
+	localStorage["az.simday"] = currentDay;
+	updateDates(currentDay);
+	redrawFrontEnd();
+}
+
 function nextDay()
 {
-	var currentDay = parseInt(localStorage["az.simdateDay"]);
-	var currentMonth = parseInt(localStorage["az.simdateMonth"]);
-	var currentYear = parseInt(localStorage["az.simdateYear"]);
-
-	currentDay++;
-	
-	calculateDay();
-	
-	if (currentDay == 31)
-	{
-		currentDay = 1;
-		currentMonth++;
-	}
-	if (currentMonth == 13)
-	{
-		currentMonth = 1;
-		currentDay = 1;
-		currentYear++;
-	}
-
-	updateHistory(currentDay,currentMonth,currentYear);
-	
-	localStorage["az.simdateDay"] = currentDay;
-	localStorage["az.simdateMonth"] = currentMonth;
-	localStorage["az.simdateYear"] = currentYear;
-	
-	$('#simdate_day').html(localStorage["az.simdateDay"]);
-	$('#simdate_month').html(localStorage["az.simdateMonth"]);
-	$('#simdate_year').html(localStorage["az.simdateYear"]);
-	
-	redrawFrontEnd();
+	simulate(1);
 }
 
 function nextWeek()
 {
-	var currentDay = parseInt(localStorage["az.simdateDay"]);
-	var currentMonth = parseInt(localStorage["az.simdateMonth"]);
-	var currentYear = parseInt(localStorage["az.simdateYear"]);
-
-	for (var i=0;i<7;i++)
-	{
-		currentDay++;
-		calculateDay();
-		
-		if (currentDay == 31)
-		{
-			currentDay = 1;
-			currentMonth++;
-		}
-		if (currentMonth == 13)
-		{
-			currentMonth = 1;
-			currentDay = 1;
-			currentYear++;
-		}
-
-		updateHistory(currentDay,currentMonth,currentYear);
-	}
-	
-	localStorage["az.simdateDay"] = currentDay;
-	localStorage["az.simdateMonth"] = currentMonth;
-	localStorage["az.simdateYear"] = currentYear;
-	
-	$('#simdate_day').html(localStorage["az.simdateDay"]);
-	$('#simdate_month').html(localStorage["az.simdateMonth"]);
-	$('#simdate_year').html(localStorage["az.simdateYear"]);
-	
-	redrawFrontEnd();
+	simulate(7);
 }
 
 function nextMonth()
 {
-	var currentDay = parseInt(localStorage["az.simdateDay"]);
-	var currentMonth = parseInt(localStorage["az.simdateMonth"]);
-	var currentYear = parseInt(localStorage["az.simdateYear"]);
-
-	for (var i=0;i<30;i++)
-	{
-		currentDay++;
-		calculateDay();
-		
-		if (currentDay == 31)
-		{
-			currentDay = 1;
-			currentMonth++;
-		}
-		if (currentMonth == 13)
-		{
-			currentMonth = 1;
-			currentDay = 1;
-			currentYear++;
-		}
-		
-		updateHistory(currentDay,currentMonth,currentYear);
-	}
-	
-	localStorage["az.simdateDay"] = currentDay;
-	localStorage["az.simdateMonth"] = currentMonth;
-	localStorage["az.simdateYear"] = currentYear;
-	
-	$('#simdate_day').html(localStorage["az.simdateDay"]);
-	$('#simdate_month').html(localStorage["az.simdateMonth"]);
-	$('#simdate_year').html(localStorage["az.simdateYear"]);
-	
-	redrawFrontEnd();
+	simulate(30);
 }
 
-function updateHistory(currentDay,currentMonth,currentYear)
+function updateHistory(currentDay/*,currentMonth,currentYear*/)
 {
-	if (currentDay%7==1)
+	// TODO: Check if (Week|Month|Year)End is needed, or actually (Week|Month|Year)Start
+	if (isWeekEnd(currentDay))
 	{
 		for (var i=1;i<=parseInt(localStorage["az.householdCount"]);i++)
 		{
@@ -146,7 +105,7 @@ function updateHistory(currentDay,currentMonth,currentYear)
 			}
 		}
 	}
-	if (currentDay==1)
+	if (isMonthEnd(currentDay))
 	{
 		for (var i=1;i<=parseInt(localStorage["az.householdCount"]);i++)
 		{
@@ -161,7 +120,7 @@ function updateHistory(currentDay,currentMonth,currentYear)
 		}
 	}
 
-	if (currentMonth==1)
+	if (isYearEnd(currentDay))
 	{
 		for (var i=1;i<=parseInt(localStorage["az.householdCount"]);i++)
 		{

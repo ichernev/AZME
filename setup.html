@@ -182,9 +182,7 @@
 		// Clear local storage
 		localStorage.clear();
 		
-		localStorage["az.simdateDay"] = 1;
-		localStorage["az.simdateMonth"] = 1;
-		localStorage["az.simdateYear"] = 1;
+		localStorage["az.simday"] = '0';  // Backend counts from 0.
 		
 		var numHouseholds = parseInt($('#numHouseholds').val());
 		var startingHouseholdAssets = parseInt($('#startingHouseholdAssets').val());
